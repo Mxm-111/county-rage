@@ -5,459 +5,193 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>البوابة الرئيسية</title>
     
-    <!-- Preconnect to external domains for faster loading -->
     <link rel="preconnect" href="https://prod.spline.design" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://unpkg.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
 
-    <!-- Scripts and Styles -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
+        /* --- Base and Variables --- */
         :root {
             --bg-color: #000000;
             --card-color: rgba(10, 15, 25, 0.7);
-            /* Default accent colors */
-            --border-color: rgba(56, 139, 253, 0.3);
-            --accent-color: #388bfd;
-            --accent-glow: rgba(56, 139, 253, 0.5);
             --text-color: #c9d1d9;
             --text-heading: #f0f6fc;
         }
-
-        body {
+        body { 
             font-family: 'Tajawal', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
-            overflow: hidden;
-            margin: 0;
-        }
-        
-        #spline-background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            border: none;
-            background: var(--bg-color);  
-            transition: filter 0.5s ease-in-out, transform 0.5s ease-in-out;
         }
 
+        /* --- Animations and Effects --- */
+        #spline-background {
+            transform: translate(-50%, -50%) scale(1);
+        }
         #spline-background.blurry {
             filter: blur(10px) brightness(0.6);
-            transform: scale(1.05);
+            transform: translate(-50%, -50%) scale(1.05);
         }
-
-        .spline-watermark-cover {
-            position: fixed;
-            bottom: -5px;
-            right: -5px;
-            width: 200px;
-            height: 60px;
-            background-color: var(--bg-color);
-            z-index: 5;
-            pointer-events: none;
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
         }
-
-        #main-interface {
-            position: relative;
-            z-index: 10;
-            height: 100vh;
-            width: 100vw;
-            pointer-events: none;
-        }
-
-        #main-interface > * {
-            pointer-events: auto;
-        }
-
-        .nav-node {
-            position: absolute;
-            width: 110px; /* Increased size */
-            height: 110px; /* Increased size */
-            border: 2px solid var(--border-color);
-            border-radius: 50%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background-color: rgba(13, 17, 23, 0.5);
-            backdrop-filter: blur(8px);
-            animation: float 6s ease-in-out infinite;
-            text-align: center; /* Added for better text centering */
-        }
+        .animate-float { animation: float 6s ease-in-out infinite; }
         
-        .nav-node .node-label-main {
-            font-weight: 700;
-            font-size: 1.1rem; /* Slightly larger text */
-            color: var(--text-heading);
-        }
-
-        .nav-node:hover {
-            transform: scale(1.15) !important;
-            background-color: rgba(56, 139, 253, 0.2);
-            border-color: var(--accent-color);
-            box-shadow: 0 0 25px var(--accent-glow);
-        }
-
-        /* Color Overrides */
-        #node-police {
-             --border-color: rgba(56, 139, 253, 0.3);
-            --accent-color: #388bfd;
-            --accent-glow: rgba(56, 139, 253, 0.5);
-        }
-        #node-facilities { 
-            --border-color: rgba(74, 85, 104, 0.7);
-            --accent-color: #4a5568;
-            --accent-glow: rgba(74, 85, 104, 0.5);
-        }
-        #node-mechanic { 
-            --border-color: rgba(160, 174, 192, 0.7);
-            --accent-color: #a0aec0;
-            --accent-glow: rgba(160, 174, 192, 0.5);
-        }
-        #node-medic { 
-            --border-color: rgba(229, 62, 62, 0.5);
-            --accent-color: #e53e3e;
-            --accent-glow: rgba(229, 62, 62, 0.5);
-        }
-
+        /* --- Dynamic and Variable-based Styles --- */
+        #node-police { --border-color: rgba(56, 139, 253, 0.3); --accent-color: #388bfd; --accent-glow: rgba(56, 139, 253, 0.5); }
+        #node-facilities { --border-color: rgba(74, 85, 104, 0.7); --accent-color: #4a5568; --accent-glow: rgba(74, 85, 104, 0.5); }
+        #node-mechanic { --border-color: rgba(160, 174, 192, 0.7); --accent-color: #a0aec0; --accent-glow: rgba(160, 174, 192, 0.5); }
+        #node-medic { --border-color: rgba(229, 62, 62, 0.5); --accent-color: #e53e3e; --accent-glow: rgba(229, 62, 62, 0.5); }
+        
         .nav-node { border-color: var(--border-color); }
         .nav-node:hover {
             background-color: color-mix(in srgb, var(--accent-color) 20%, transparent);
             border-color: var(--accent-color);
             box-shadow: 0 0 25px var(--accent-glow);
         }
-      
-
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
-            100% { transform: translateY(0px); }
-        }
-
-        #node-police { top: 22%; left: 24%; animation-delay: 0s; } /* Adjusted position */
-        #node-facilities { top: 22%; left: 35%; animation-delay: -1.5s; } /* Adjusted position */
-        
-        #node-medic { top: 22%; right: 24%; animation-delay: -3s; } /* Adjusted position */
-        #node-mechanic { top: 22%; right: 35%; animation-delay: -4.5s; } /* Adjusted position */
-
-        #content-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 20;
-            background-color: rgba(0, 0, 0, 0.6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.4s ease, visibility 0.4s ease;
-        }
-        #content-overlay.visible {
-            opacity: 1;
-            visibility: visible;
-        }
-
         #content-card {
             background-color: var(--card-color);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            width: 90%;
-            max-width: 600px;
-            max-height: 90vh;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 0 50px rgba(0,0,0,0.5);
-            transform: scale(0.9);
-            transition: transform 0.4s ease;
+            border-color: var(--border-color);
         }
-        #content-overlay.visible #content-card {
-            transform: scale(1);
-        }
-        
-        #card-body {
-            padding: 40px;
-            text-align: center;
-        }
-        
-        #close-content-btn {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 50%;
-            padding: 8px;
-            transition: background 0.2s;
-            z-index: 25;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        #close-content-btn:hover { background: rgba(255,255,255,0.2); }
-
-        .main-title {
-            color: var(--text-heading);
-            border-bottom: 2px solid var(--accent-color);
+        .main-title { 
+            border-color: var(--accent-color);
             text-shadow: 0 0 10px var(--accent-glow);
-            font-size: 2.5rem;
-            font-weight: 800;
-            padding-bottom: 0.75rem;
-            margin-bottom: 2rem;
         }
-
         .link-box {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-            margin-top: 2rem;
-            padding: 1rem 2rem;
             background: linear-gradient(145deg, var(--accent-color), color-mix(in srgb, var(--accent-color) 85%, black 15%));
-            border: none;
-            border-radius: 12px;
-            transition: all 0.3s ease;
-            color: var(--text-heading);
-            font-size: 1.25rem;
-            font-weight: 700;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            text-decoration: none;
         }
         .link-box:hover {
-            transform: translateY(-3px) scale(1.03);
             box-shadow: 0 8px 25px color-mix(in srgb, var(--accent-color) 30%, transparent);
-            filter: brightness(1.1);
         }
 
-        .page-title-container {
-            position: absolute;
-            top: 4%; /* Adjusted position */
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            text-align: center;
-            z-index: 15;
-            pointer-events: none;
+        /* --- Shared Component Styles --- */
+        .nav-node {
+            position: absolute; width: 85px; height: 85px;
+            opacity: 0; transform: translateY(20px) scale(0.9);
+            border-width: 2px; border-radius: 9999px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            cursor: pointer; background-color: rgba(13, 17, 23, 0.5);
+            backdrop-filter: blur(8px); text-align: center;
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out, background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
         }
-
-        .page-main-title {
-            font-size: 2.8rem;
-            font-weight: 800;
-            color: var(--text-heading);
-            text-shadow: none; /* Removed the glow effect */
+        .nav-node:hover { transform: scale(1.15) !important; }
+        .nav-node .node-label-main { 
+            font-weight: 700; font-size: 0.9rem; color: var(--text-heading); margin-top: 0.25rem;
         }
-
-        .title-accent-word {
-            color: #7d6a54; /* Dark Gold accent color */
-            text-shadow: none; /* Remove glow inherited from parent */
+        @media (min-width: 768px) {
+            .nav-node { width: 110px; height: 110px; }
+            .nav-node .node-label-main { font-size: 1.1rem; }
         }
-
-        .page-subtitle {
-            font-size: 1.1rem;
-            font-weight: 500;
-            color: var(--text-color);
-            margin-top: 0.5rem;
-            text-shadow: 0 0 5px rgba(0,0,0,0.5);
-        }
-
-
-        @media (max-width: 768px) {
-            .nav-node {
-                width: 85px; /* Increased size for mobile */
-                height: 85px; /* Increased size for mobile */
-            }
-             .nav-node .node-label-main {
-                font-size: 0.8rem;
-            }
-            .nav-node svg { width: 24px; height: 24px; }
-            #node-police { left: 5%; top: 20%; } /* Adjusted position for mobile */
-            #node-facilities { left: 30%; top: 20%; } /* Adjusted position for mobile */
-            #node-medic { right: 5%; top: 20%; } /* Adjusted position for mobile */
-            #node-mechanic { right: 30%; top: 20%; } /* Adjusted position for mobile */
-            
-            .page-title-container {
-                top: 5%; /* Adjusted for mobile */
-            }
-            .page-main-title {
-                font-size: 1.8rem;
-                line-height: 1.4;
-                padding: 0 1rem;
-            }
-
-            .page-subtitle {
-                font-size: 0.9rem;
-                margin-top: 0.25rem;
-            }
-
-            #content-card { width: 95%; }
-            #card-body { padding: 25px; }
-            .main-title { font-size: 2rem; }
-            .link-box { padding: 1rem 1.5rem; font-size: 1rem;}
-        }
-
     </style>
 </head>
-<body>
+<body class="overflow-hidden m-0">
     
-    <!-- The 3D robot model embedded from Spline -->
-    <iframe id="spline-background" src='https://my.spline.design/nexbotrobotcharacterconcept-1BsNTQMVnhlQ5SN7jKmSIZgI/' fetchpriority="high"></iframe>
-    
-    <!-- This div covers the Spline watermark -->
-    <div class="spline-watermark-cover"></div>
+    <!-- Engineered Solution: Iframe container clips the watermark -->
+    <div class="fixed inset-0 z-10 overflow-hidden pointer-events-none">
+        <iframe id="spline-background" class="absolute top-1/2 left-1/2 w-[calc(100%+120px)] h-[calc(100%+120px)] border-none transition-all duration-500 ease-in-out pointer-events-auto" src='https://my.spline.design/nexbotrobotcharacterconcept-1BsNTQMVnhlQ5SN7jKmSIZgI/' fetchpriority="high"></iframe>
+    </div>
 
-    <main id="main-interface">
-        <header class="page-title-container">
-            <h1 class="page-main-title">بوابة القطاعات المعتمدة مقاطعة <span class="title-accent-word">ريج</span></h1>
-            <p class="page-subtitle">مرجعك التفاعلي للقطاعات المعتمدة</p>
+    <main id="main-interface" class="relative z-20 h-screen w-screen pointer-events-none">
+        <header id="page-header" class="absolute top-[4%] left-1/2 -translate-x-1/2 w-full text-center z-10 opacity-0 -translate-y-4 transition-all duration-700 ease-out [&.visible]:opacity-100 [&.visible]:translate-y-0">
+            <h1 class="text-2xl md:text-4xl font-extrabold text-white px-4">بوابة القطاعات المعتمدة مقاطعة <span class="text-[#7d6a54]">ريج</span></h1>
+            <p class="text-sm md:text-lg font-medium mt-2">مرجعك التفاعلي للقطاعات المعتمدة</p>
         </header>
-        <nav id="navigation-nodes">
-            <!-- Left Side -->
-            <div class="nav-node" id="node-police" data-content="police">
-                <i data-lucide="shield"></i>
+
+        <nav id="navigation-nodes" class="pointer-events-auto [&.visible_.nav-node]:opacity-100 [&.visible_.nav-node]:translate-y-0 [&.visible_.nav-node]:scale-100">
+            <div id="node-police" data-content="police" class="nav-node animate-float top-[20%] md:top-[22%] left-[5%] md:left-[24%] [animation-delay:0s] visible:delay-100">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 md:w-8 md:h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
                 <span class="node-label-main">الشرطة</span>
             </div>
-            <div class="nav-node" id="node-facilities" data-content="facilities">
-                 <i data-lucide="building-2"></i>
+            <div id="node-facilities" data-content="facilities" class="nav-node animate-float top-[20%] md:top-[22%] left-[30%] md:left-[35%] [animation-delay:-1.5s] visible:delay-200">
+                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 md:w-8 md:h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M6.376 18.91a6 6 0 0 1 11.249.003"/><circle cx="12" cy="11" r="4"/></svg>
                 <span class="node-label-main">امن المنشات</span>
             </div>
-            
-            <!-- Right Side -->
-            <div class="nav-node" id="node-medic" data-content="medic">
-                <i data-lucide="siren"></i>
+            <div id="node-medic" data-content="medic" class="nav-node animate-float top-[20%] md:top-[22%] right-[5%] md:right-[24%] [animation-delay:-3s] visible:delay-300">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 md:w-8 md:h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18v-6a5 5 0 1 1 10 0v6"/><path d="M5 21a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-1a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2z"/><path d="M21 12h1"/><path d="M18.5 4.5 18 5"/><path d="M2 12h1"/><path d="M12 2v1"/><path d="m4.929 4.929.707.707"/><path d="M12 12v6"/></svg>
                 <span class="node-label-main">الهلال الاحمر</span>
             </div>
-            <div class="nav-node" id="node-mechanic" data-content="mechanic">
-                <i data-lucide="wrench"></i>
+            <div id="node-mechanic" data-content="mechanic" class="nav-node animate-float top-[20%] md:top-[22%] right-[30%] md:right-[35%] [animation-delay:-4.5s] visible:delay-400">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 md:w-8 md:h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
                 <span class="node-label-main">الميكانيكي</span>
             </div>
         </nav>
     </main>
-
-    <!-- Overlay for displaying content -->
-    <div id="content-overlay">
-        <div id="content-card">
-            <button id="close-content-btn" aria-label="إغلاق"><i data-lucide="x"></i></button>
-            <div id="card-body">
-                <!-- Content will be injected here by JavaScript -->
-            </div>
+    
+    <div id="content-overlay" class="fixed inset-0 z-30 bg-black/60 flex items-center justify-center opacity-0 invisible transition-opacity duration-400 ease-in-out pointer-events-none [&.visible]:opacity-100 [&.visible]:visible">
+        <div id="content-card" class="relative border rounded-2xl w-11/12 max-w-xl max-h-[90vh] flex flex-col shadow-2xl scale-90 transition-transform duration-400 ease-in-out pointer-events-none backdrop-blur-xl [&.visible]:scale-100">
+            <button id="close-content-btn" class="absolute top-4 left-4 bg-white/10 rounded-full p-2 text-white border-none cursor-pointer transition-colors duration-200 hover:bg-white/20 pointer-events-auto">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            <div id="card-body" class="p-6 md:p-10 text-center"></div>
         </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            lucide.createIcons();
-
-            // UI Elements
-            const navNodes = document.querySelectorAll('.nav-node');
-            const contentOverlay = document.getElementById('content-overlay');
-            const contentCard = document.getElementById('content-card');
-            const contentCardBody = document.getElementById('card-body');
-            const closeBtn = document.getElementById('close-content-btn');
-            const splineBackground = document.getElementById('spline-background');
-            
-            // Content Data Store
-            const contentData = {
-                police: {
-                    title: "بوابة الشرطة",
-                    instruction: "يجب ان تضغط على المربع حتى ينقلك على الموقع الرئيسي للقطاع.",
-                    link: "https://mxm-111.github.io/police-rage/", // Updated link
-                    accentColor: "#388bfd",
-                    borderColor: "rgba(56, 139, 253, 0.3)",
-                    glowColor: "rgba(56, 139, 253, 0.5)"
-                },
-                facilities: {
-                    title: "بوابة امن المنشات",
-                    instruction: "يجب ان تضغط على المربع حتى ينقلك على الموقع الرئيسي للقطاع.",
-                    link: "#",
-                    accentColor: "#4a5568",
-                    borderColor: "rgba(74, 85, 104, 0.7)",
-                    glowColor: "rgba(74, 85, 104, 0.5)"
-                },
-                medic: {
-                    title: "بوابة الهلال الاحمر",
-                    instruction: "يجب ان تضغط على المربع حتى ينقلك على الموقع الرئيسي للقطاع.",
-                    link: "#",
-                    accentColor: "#e53e3e",
-                    borderColor: "rgba(229, 62, 62, 0.5)",
-                    glowColor: "rgba(229, 62, 62, 0.5)",
-                    cardBgColor: "rgba(45, 15, 20, 0.75)" // Custom background for the card
-                },
-                mechanic: {
-                    title: "بوابة الميكانيكي",
-                    instruction: "يجب ان تضغط على المربع حتى ينقلك على الموقع الرئيسي للقطاع.",
-                    link: "#",
-                    accentColor: "#a0aec0",
-                    borderColor: "rgba(160, 174, 192, 0.7)",
-                    glowColor: "rgba(160, 174, 192, 0.5)"
-                }
+        document.addEventListener('DOMContentLoaded', () => {
+            const UIElements = {
+                pageHeader: document.getElementById('page-header'),
+                navNodesContainer: document.getElementById('navigation-nodes'),
+                navNodes: document.querySelectorAll('.nav-node'),
+                contentOverlay: document.getElementById('content-overlay'),
+                contentCard: document.getElementById('content-card'),
+                contentCardBody: document.getElementById('card-body'),
+                closeBtn: document.getElementById('close-content-btn'),
+                splineBackground: document.getElementById('spline-background')
             };
 
-            // Function to open the content modal
-            function openContent(contentKey) {
-                const data = contentData[contentKey];
-                if (data) {
-                    // Update CSS variables on the content card
-                    contentCard.style.setProperty('--accent-color', data.accentColor);
-                    contentCard.style.setProperty('--border-color', data.borderColor);
-                    contentCard.style.setProperty('--accent-glow', data.glowColor);
+            setTimeout(() => {
+                UIElements.pageHeader.classList.add('visible');
+                UIElements.navNodesContainer.classList.add('visible');
+            }, 3000);
 
-                    // Set custom card background if specified, otherwise revert to default from stylesheet
-                    contentCard.style.backgroundColor = data.cardBgColor || '';
+            const instructionText = 'يجب ان تضغط على المربع حتى ينقلك على الموقع الرئيسي للقطاع.';
+            const contentData = {
+                police: { title: "بوابة الشرطة", link: "https://mxm-111.github.io/police-rage/", accentColor: "#388bfd", borderColor: "rgba(56, 139, 253, 0.3)", glowColor: "rgba(56, 139, 253, 0.5)" },
+                facilities: { title: "بوابة امن المنشات", link: "#", accentColor: "#4a5568", borderColor: "rgba(74, 85, 104, 0.7)", glowColor: "rgba(74, 85, 104, 0.5)" },
+                medic: { title: "بوابة الهلال الاحمر", link: "#", accentColor: "#e53e3e", borderColor: "rgba(229, 62, 62, 0.5)", glowColor: "rgba(229, 62, 62, 0.5)", cardBgColor: "rgba(45, 15, 20, 0.75)" },
+                mechanic: { title: "بوابة الميكانيكي", link: "#", accentColor: "#a0aec0", borderColor: "rgba(160, 174, 192, 0.7)", glowColor: "rgba(160, 174, 192, 0.5)" }
+            };
 
-                    contentCardBody.innerHTML = `
-                        <h2 class="main-title">${data.title}</h2>
-                        <p class="text-lg text-gray-300">${data.instruction}</p>
-                        <a href="${data.link}" target="_blank" class="link-box">
-                            <span>اضغط هنا للانتقال</span>
-                            <i data-lucide="arrow-up-right-square"></i>
-                        </a>
-                    `;
-                    // Render the newly added icon
-                    lucide.createIcons();
+            const openContent = (key) => {
+                const data = contentData[key];
+                if (!data) return;
 
-                    contentOverlay.classList.add('visible');
-                    splineBackground.classList.add('blurry');
-                }
-            }
+                const style = UIElements.contentCard.style;
+                style.setProperty('--accent-color', data.accentColor);
+                style.setProperty('--border-color', data.borderColor);
+                style.setProperty('--accent-glow', data.glowColor);
+                style.backgroundColor = data.cardBgColor || '';
+                
+                UIElements.contentCardBody.innerHTML = `
+                    <h2 class="main-title text-3xl md:text-4xl font-extrabold pb-3 mb-8 border-b-2" style="color:var(--text-heading)">${data.title}</h2>
+                    <p class="text-base md:text-lg">${instructionText}</p>
+                    <a href="${data.link}" target="_blank" class="link-box inline-flex items-center justify-center gap-3 mt-8 py-3 px-6 md:py-4 md:px-8 rounded-xl transition-all duration-300 ease-in-out text-base md:text-xl font-bold shadow-lg no-underline hover:-translate-y-1 hover:scale-105 hover:brightness-110 pointer-events-auto" style="color:var(--text-heading)">
+                        <span>اضغط هنا للانتقال</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6"/><path d="m21 3-9 9"/><path d="M15 3h6v6"/></svg>
+                    </a>`;
 
-            // Function to close the content modal
-            function closeContent() {
-                contentOverlay.classList.remove('visible');
-                splineBackground.classList.remove('blurry');
-                // Clear content after animation
+                UIElements.contentOverlay.classList.add('visible');
+                UIElements.contentCard.classList.add('visible');
+                UIElements.splineBackground.classList.add('blurry');
+            };
+
+            const closeContent = () => {
+                UIElements.contentOverlay.classList.remove('visible');
+                UIElements.contentCard.classList.remove('visible');
+                UIElements.splineBackground.classList.remove('blurry');
                 setTimeout(() => { 
-                    contentCardBody.innerHTML = ''; 
-                    contentCard.style.backgroundColor = ''; // Revert to default stylesheet color
+                    UIElements.contentCardBody.innerHTML = ''; 
+                    UIElements.contentCard.style.backgroundColor = '';
                 }, 400);
-            }
+            };
 
-            // Event Listeners
-            navNodes.forEach(node => {
-                node.addEventListener('click', function () {
-                    const contentKey = this.getAttribute('data-content');
-                    openContent(contentKey);
-                });
-            });
-
-            closeBtn.addEventListener('click', closeContent);
-            contentOverlay.addEventListener('click', (e) => {
-                // Close only if the dark background is clicked, not the card itself
-                if (e.target === contentOverlay) {
-                    closeContent();
-                }
-            });
+            UIElements.navNodes.forEach(node => node.addEventListener('click', () => openContent(node.dataset.content)));
+            UIElements.closeBtn.addEventListener('click', closeContent);
         });
     </script>
-
 </body>
 </html>
 
