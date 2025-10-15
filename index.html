@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>البوابة الرئيسية</title>
+    
+    <!-- Preconnect to external domains for faster loading -->
+    <link rel="preconnect" href="https://prod.spline.design" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://unpkg.com" crossorigin>
+
+    <!-- Scripts and Styles -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            --bg-color: #000000;
+            --card-color: rgba(10, 15, 25, 0.7);
+            /* Default accent colors */
+            --border-color: rgba(56, 139, 253, 0.3);
+            --accent-color: #388bfd;
+            --accent-glow: rgba(56, 139, 253, 0.5);
+            --text-color: #c9d1d9;
+            --text-heading: #f0f6fc;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow: hidden;
+            margin: 0;
+        }
+        
+        #spline-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            border: none;
+            background: var(--bg-color);  
+            transition: filter 0.5s ease-in-out, transform 0.5s ease-in-out;
+        }
+
+        #spline-background.blurry {
+            filter: blur(10px) brightness(0.6);
+            transform: scale(1.05);
+        }
+
+        .spline-watermark-cover {
+            position: fixed;
+            bottom: -5px;
+            right: -5px;
+            width: 200px;
+            height: 60px;
+            background-color: var(--bg-color);
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        #main-interface {
+            position: relative;
+            z-index: 10;
+            height: 100vh;
+            width: 100vw;
+            pointer-events: none;
+        }
+
+        #main-interface > * {
+            pointer-events: auto;
+        }
+
+        .nav-node {
+            position: absolute;
+            width: 110px; /* Increased size */
+            height: 110px; /* Increased size */
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: rgba(13, 17, 23, 0.5);
+            backdrop-filter: blur(8px);
+            animation: float 6s ease-in-out infinite;
+            text-align: center; /* Added for better text centering */
+        }
+        
+        .nav-node .node-label-main {
+            font-weight: 700;
+            font-size: 1.1rem; /* Slightly larger text */
+            color: var(--text-heading);
+        }
+
+        .nav-node:hover {
+            transform: scale(1.15) !important;
+            background-color: rgba(56, 139, 253, 0.2);
+            border-color: var(--accent-color);
+            box-shadow: 0 0 25px var(--accent-glow);
+        }
+
+        /* Color Overrides */
+        #node-police {
+             --border-color: rgba(56, 139, 253, 0.3);
+            --accent-color: #388bfd;
+            --accent-glow: rgba(56, 139, 253, 0.5);
+        }
+        #node-facilities { 
+            --border-color: rgba(74, 85, 104, 0.7);
+            --accent-color: #4a5568;
+            --accent-glow: rgba(74, 85, 104, 0.5);
+        }
+        #node-mechanic { 
+            --border-color: rgba(160, 174, 192, 0.7);
+            --accent-color: #a0aec0;
+            --accent-glow: rgba(160, 174, 192, 0.5);
+        }
+        #node-medic { 
+            --border-color: rgba(229, 62, 62, 0.5);
+            --accent-color: #e53e3e;
+            --accent-glow: rgba(229, 62, 62, 0.5);
+        }
+
+        .nav-node { border-color: var(--border-color); }
+        .nav-node:hover {
+            background-color: color-mix(in srgb, var(--accent-color) 20%, transparent);
+            border-color: var(--accent-color);
+            box-shadow: 0 0 25px var(--accent-glow);
+        }
+      
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+
+        #node-police { top: 22%; left: 24%; animation-delay: 0s; } /* Adjusted position */
+        #node-facilities { top: 22%; left: 35%; animation-delay: -1.5s; } /* Adjusted position */
+        
+        #node-medic { top: 22%; right: 24%; animation-delay: -3s; } /* Adjusted position */
+        #node-mechanic { top: 22%; right: 35%; animation-delay: -4.5s; } /* Adjusted position */
+
+        #content-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 20;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+        #content-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #content-card {
+            background-color: var(--card-color);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            transform: scale(0.9);
+            transition: transform 0.4s ease;
+        }
+        #content-overlay.visible #content-card {
+            transform: scale(1);
+        }
+        
+        #card-body {
+            padding: 40px;
+            text-align: center;
+        }
+        
+        #close-content-btn {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            padding: 8px;
+            transition: background 0.2s;
+            z-index: 25;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        #close-content-btn:hover { background: rgba(255,255,255,0.2); }
+
+        .main-title {
+            color: var(--text-heading);
+            border-bottom: 2px solid var(--accent-color);
+            text-shadow: 0 0 10px var(--accent-glow);
+            font-size: 2.5rem;
+            font-weight: 800;
+            padding-bottom: 0.75rem;
+            margin-bottom: 2rem;
+        }
+
+        .link-box {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-top: 2rem;
+            padding: 1rem 2rem;
+            background: linear-gradient(145deg, var(--accent-color), color-mix(in srgb, var(--accent-color) 85%, black 15%));
+            border: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            color: var(--text-heading);
+            font-size: 1.25rem;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            text-decoration: none;
+        }
+        .link-box:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 8px 25px color-mix(in srgb, var(--accent-color) 30%, transparent);
+            filter: brightness(1.1);
+        }
+
+        .page-title-container {
+            position: absolute;
+            top: 4%; /* Adjusted position */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            text-align: center;
+            z-index: 15;
+            pointer-events: none;
+        }
+
+        .page-main-title {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: var(--text-heading);
+            text-shadow: none; /* Removed the glow effect */
+        }
+
+        .title-accent-word {
+            color: #7d6a54; /* Dark Gold accent color */
+            text-shadow: none; /* Remove glow inherited from parent */
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--text-color);
+            margin-top: 0.5rem;
+            text-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+
+
+        @media (max-width: 768px) {
+            .nav-node {
+                width: 85px; /* Increased size for mobile */
+                height: 85px; /* Increased size for mobile */
+            }
+             .nav-node .node-label-main {
+                font-size: 0.8rem;
+            }
+            .nav-node svg { width: 24px; height: 24px; }
+            #node-police { left: 5%; top: 20%; } /* Adjusted position for mobile */
+            #node-facilities { left: 30%; top: 20%; } /* Adjusted position for mobile */
+            #node-medic { right: 5%; top: 20%; } /* Adjusted position for mobile */
+            #node-mechanic { right: 30%; top: 20%; } /* Adjusted position for mobile */
+            
+            .page-title-container {
+                top: 5%; /* Adjusted for mobile */
+            }
+            .page-main-title {
+                font-size: 1.8rem;
+                line-height: 1.4;
+                padding: 0 1rem;
+            }
+
+            .page-subtitle {
+                font-size: 0.9rem;
+                margin-top: 0.25rem;
+            }
+
+            #content-card { width: 95%; }
+            #card-body { padding: 25px; }
+            .main-title { font-size: 2rem; }
+            .link-box { padding: 1rem 1.5rem; font-size: 1rem;}
+        }
+
+    </style>
+</head>
+<body>
+    
+    <!-- The 3D robot model embedded from Spline -->
+    <iframe id="spline-background" src='https://my.spline.design/nexbotrobotcharacterconcept-1BsNTQMVnhlQ5SN7jKmSIZgI/' fetchpriority="high"></iframe>
+    
+    <!-- This div covers the Spline watermark -->
+    <div class="spline-watermark-cover"></div>
+
+    <main id="main-interface">
+        <header class="page-title-container">
+            <h1 class="page-main-title">بوابة القطاعات المعتمدة مقاطعة <span class="title-accent-word">ريج</span></h1>
+            <p class="page-subtitle">مرجعك التفاعلي للقطاعات المعتمدة</p>
+        </header>
+        <nav id="navigation-nodes">
+            <!-- Left Side -->
+            <div class="nav-node" id="node-police" data-content="police">
+                <i data-lucide="shield"></i>
+                <span class="node-label-main">الشرطة</span>
+            </div>
+            <div class="nav-node" id="node-facilities" data-content="facilities">
+                 <i data-lucide="building-2"></i>
+                <span class="node-label-main">امن المنشات</span>
+            </div>
+            
+            <!-- Right Side -->
+            <div class="nav-node" id="node-medic" data-content="medic">
+                <i data-lucide="siren"></i>
+                <span class="node-label-main">الهلال الاحمر</span>
+            </div>
+            <div class="nav-node" id="node-mechanic" data-content="mechanic">
+                <i data-lucide="wrench"></i>
+                <span class="node-label-main">الميكانيكي</span>
+            </div>
+        </nav>
+    </main>
+
+    <!-- Overlay for displaying content -->
+    <div id="content-overlay">
+        <div id="content-card">
+            <button id="close-content-btn" aria-label="إغلاق"><i data-lucide="x"></i></button>
+            <div id="card-body">
+                <!-- Content will be injected here by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            lucide.createIcons();
+
+            // UI Elements
+            const navNodes = document.querySelectorAll('.nav-node');
+            const contentOverlay = document.getElementById('content-overlay');
+            const contentCard = document.getElementById('content-card');
+            const contentCardBody = document.getElementById('card-body');
+            const closeBtn = document.getElementById('close-content-btn');
+            const splineBackground = document.getElementById('spline-background');
+            
+            // Content Data Store
+            const contentData = {
+                police: {
+                    title: "بوابة الشرطة",
+                    instruction: "يجب ان تضغط على المربع حتى ينقلك على الموقع الرئيسي للقطاع.",
+                    link: "https://mxm-111.github.io/police-rage/", // Updated link
+                    accentColor: "#388bfd",
+                    borderColor: "rgba(56, 139, 253, 0.3)",
+                    glowColor: "rgba(56, 139, 253, 0.5)"
+                },
+                facilities: {
+                    title: "بوابة امن المنشات",
+                    instruction: "يجب ان تضغط على المربع حتى ينقلك على الموقع الرئيسي للقطاع.",
+                    link: "#",
+                    accentColor: "#4a5568",
+                    borderColor: "rgba(74, 85, 104, 0.7)",
+                    glowColor: "rgba(74, 85, 104, 0.5)"
+                },
+                medic: {
+                    title: "بوابة الهلال الاحمر",
+                    instruction: "يجب ان تضغط على المربع حتى ينقلك على الموقع الرئيسي للقطاع.",
+                    link: "#",
+                    accentColor: "#e53e3e",
+                    borderColor: "rgba(229, 62, 62, 0.5)",
+                    glowColor: "rgba(229, 62, 62, 0.5)",
+                    cardBgColor: "rgba(45, 15, 20, 0.75)" // Custom background for the card
+                },
+                mechanic: {
+                    title: "بوابة الميكانيكي",
+                    instruction: "يجب ان تضغط على المربع حتى ينقلك على الموقع الرئيسي للقطاع.",
+                    link: "#",
+                    accentColor: "#a0aec0",
+                    borderColor: "rgba(160, 174, 192, 0.7)",
+                    glowColor: "rgba(160, 174, 192, 0.5)"
+                }
+            };
+
+            // Function to open the content modal
+            function openContent(contentKey) {
+                const data = contentData[contentKey];
+                if (data) {
+                    // Update CSS variables on the content card
+                    contentCard.style.setProperty('--accent-color', data.accentColor);
+                    contentCard.style.setProperty('--border-color', data.borderColor);
+                    contentCard.style.setProperty('--accent-glow', data.glowColor);
+
+                    // Set custom card background if specified, otherwise revert to default from stylesheet
+                    contentCard.style.backgroundColor = data.cardBgColor || '';
+
+                    contentCardBody.innerHTML = `
+                        <h2 class="main-title">${data.title}</h2>
+                        <p class="text-lg text-gray-300">${data.instruction}</p>
+                        <a href="${data.link}" target="_blank" class="link-box">
+                            <span>اضغط هنا للانتقال</span>
+                            <i data-lucide="arrow-up-right-square"></i>
+                        </a>
+                    `;
+                    // Render the newly added icon
+                    lucide.createIcons();
+
+                    contentOverlay.classList.add('visible');
+                    splineBackground.classList.add('blurry');
+                }
+            }
+
+            // Function to close the content modal
+            function closeContent() {
+                contentOverlay.classList.remove('visible');
+                splineBackground.classList.remove('blurry');
+                // Clear content after animation
+                setTimeout(() => { 
+                    contentCardBody.innerHTML = ''; 
+                    contentCard.style.backgroundColor = ''; // Revert to default stylesheet color
+                }, 400);
+            }
+
+            // Event Listeners
+            navNodes.forEach(node => {
+                node.addEventListener('click', function () {
+                    const contentKey = this.getAttribute('data-content');
+                    openContent(contentKey);
+                });
+            });
+
+            closeBtn.addEventListener('click', closeContent);
+            contentOverlay.addEventListener('click', (e) => {
+                // Close only if the dark background is clicked, not the card itself
+                if (e.target === contentOverlay) {
+                    closeContent();
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
+
